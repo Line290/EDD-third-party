@@ -26,11 +26,10 @@ def create_input_files(image_folder="pubtabnet", output_folder="output_w_none_39
     """
     Creates input files for training, validation, and test data.
 
-    :param json_file_path: path of Json data with splits, structure token, cell token, img_path
     :param image_folder: folder with downloaded images
     :param output_folder: folder to save files
     :param max_len_token_structure: don't sample captions_structure longer than this length
-    :param max_len_token_cell: don't sample captions_cell longer than this length
+    :param max_len_token_cell: sample captions_cell longer than this length will be clipped
     """
     print("create_input .....")
     with open(os.path.join(image_folder, "PubTabNet_2.0.0.jsonl"), 'r') as reader:

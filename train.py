@@ -200,6 +200,7 @@ def main():
     # https://github.com/pytorch/pytorch/issues/24005
     model = DDP(model, delay_allreduce=True)
     model._disable_allreduce = True
+
     if is_main_process():
         count = 0
         model_name_list = []
@@ -283,14 +284,11 @@ def main():
             args.hyper_loss = 0.5
             best_TED = 0.
             adjust_learning_rate(optimizer, args.learning_rate)
-        elif args.first_epoch*4 + args.second_epoch <= epoch < args.first_epoch*6 + args.second_epoch: # cell
-            best_TED = 0.
+        elif args.first_epoch*4 + args.second_epoch <= epoch < args.first_epoch*6 + args.second_epoch:
             adjust_learning_rate(optimizer, 0.5*args.learning_rate)
-        elif args.first_epoch * 6 + args.second_epoch <= epoch < args.first_epoch * 8 + args.second_epoch:  # cell
-            best_TED = 0.
+        elif args.first_epoch * 6 + args.second_epoch <= epoch < args.first_epoch * 8 + args.second_epoch:
             adjust_learning_rate(optimizer, 0.1 * args.learning_rate)
-        elif args.first_epoch * 8 + args.second_epoch <= epoch < args.first_epoch * 9 + args.second_epoch:  # cell
-            best_TED = 0.
+        elif args.first_epoch * 8 + args.second_epoch <= epoch < args.first_epoch * 9 + args.second_epoch:
             adjust_learning_rate(optimizer, 0.05*args.learning_rate)
         elif epoch >= args.first_epoch*9 + args.second_epoch:
             adjust_learning_rate(optimizer, 0.01*args.learning_rate)
@@ -393,17 +391,6 @@ def train(train_loader, model, optimizer, epoch, device, args, logger_file):
             loss = args.hyper_loss * loss_structures + (1-args.hyper_loss) * loss_cells
         elif args.stage == 'structure':
             loss = args.hyper_loss * loss_structures + (1 - args.hyper_loss) * loss_cells.detach()
-        # if args.fp16:
-        #     optimizer.zero_grad()
-        #     scaler.scale(loss).backward()   # gradients are scaled
-        #     if args.grad_clip is not None:
-        #         # https://pytorch.org/docs/stable/notes/amp_examples.html#gradient-clipping
-        #         scaler.unscale_(optimizer)
-        #         torch.nn.utils.clip_grad_value_(model.parameters(), args.grad_clip)
-        #         # clip_gradient(optimizer, args.grad_clip)
-        #     scaler.step(optimizer)
-        #     scaler.update()
-        # else:
         
         # Back prop.
         iters_to_accumulate = 1
@@ -516,12 +503,18 @@ def val(val_loader, model, device, args, teds, logger_file):
     html_trues = list()
 
     with torch.no_grad():
-        for it, (imgs, caption_structures, caplen_structures, caption_cells, caplen_cells, number_cell_per_images) in enumerate(val_loader):
+        for it, (imgs,
+                 caption_structures,
+                 caplen_structures,
+                 caption_cells,
+                 caplen_cells,
+                 number_cell_per_images) in enumerate(val_loader):
             imgs = imgs.to(device)
             caption_structures = caption_structures.to(device)
             caplen_structures = caplen_structures.to(device)
             caption_cells = [caption_cell.to(device) for caption_cell in caption_cells]
             caplen_cells = [caplen_cell.to(device) for caplen_cell in caplen_cells]
+            number_cell_per_images = number_cell_per_images.to(device)
 
             loss_structures, loss_cells, \
             batch_html_predict_only_structures, \

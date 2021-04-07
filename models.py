@@ -92,7 +92,8 @@ class EDD(nn.Module):
             imgs_structure, imgs_cell = \
                 self.encoder_wrapper(images, self.dummy_tensor)
         else:
-            imgs_structure, imgs_cell = checkpoint(self.custom(self.encoder_wrapper), images, self.dummy_tensor)
+            imgs_structure, imgs_cell = \
+                checkpoint(self.custom(self.encoder_wrapper), images, self.dummy_tensor)
 
         scores, \
         caps_sorted, \
@@ -579,7 +580,8 @@ class DecoderStructureWithAttention(nn.Module):
 
             # get and save hidden state h_k+1 when groun_truth token in t_k is <td> or >
             for i in range(batch_size_t):
-                if self.vocab["<td>"] == encoded_captions[i][t].cpu().numpy() or self.vocab[">"] == encoded_captions[i][t].cpu().numpy():
+                if self.vocab["<td>"] == encoded_captions[i][t].cpu().numpy() or \
+                        self.vocab[">"] == encoded_captions[i][t].cpu().numpy():
                     hidden_states[i].append(h[i])
 
             preds = self.fc(self.dropout(h))  # (batch_size_t, vocab_size)
@@ -590,7 +592,8 @@ class DecoderStructureWithAttention(nn.Module):
 
 
 class DecoderCellPerImageWithAttention(nn.Module):
-    def __init__(self, attention_dim, embed_dim, decoder_dim, decoder_structure_dim, vocab_size, encoder_dim=512, dropout=0.5, lstm_bias=True):
+    def __init__(self, attention_dim, embed_dim, decoder_dim,
+                 decoder_structure_dim, vocab_size, encoder_dim=512, dropout=0.5, lstm_bias=True):
         """
         :param attention_dim: size of attention network
         :param embed_dim: embedding size
