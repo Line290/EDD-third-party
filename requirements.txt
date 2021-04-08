@@ -1,0 +1,11 @@
+apted
+distance
+lxml
+tqdm
+h5py
+scipy==1.1.0
+jsonlines
+html3
+beautifulsoup4
+torch==1.6.0
+apex
