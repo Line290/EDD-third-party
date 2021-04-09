@@ -44,7 +44,7 @@ do
     --EDD_type "S1S1" \
     --image_size 640 \
     --split $SPLIT \
-    --print_freq 1 \
+    --print_freq 100 \
     --all \
     --T $T \
     --rank_method "sum" \
