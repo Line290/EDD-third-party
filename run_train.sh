@@ -3,7 +3,7 @@
 
 #max_structure=300
 max_structure_len=1024
-max_cell_len=1024
+max_cell_len=100
 
 #max_structure=1536
 # Create dataset for train and validation
