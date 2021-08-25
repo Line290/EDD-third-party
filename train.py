@@ -276,6 +276,7 @@ def main():
 
     # Train for each epoch
     for epoch in range(start_epoch, args.num_epochs):
+        train_sampler.set_epoch(epoch)
         # Structure
         if args.first_epoch <= epoch < args.first_epoch + args.second_epoch:
             adjust_learning_rate(optimizer, 0.1*args.learning_rate)
